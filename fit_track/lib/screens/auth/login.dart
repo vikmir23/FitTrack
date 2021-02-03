@@ -57,7 +57,7 @@ class _loginState extends State<login> {
             ),
             ElevatedButton(
               child: Text(
-                "Register with email",
+                "login",
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () async {
