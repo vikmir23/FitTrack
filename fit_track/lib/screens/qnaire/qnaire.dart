@@ -18,7 +18,7 @@ class _QnaireState extends State<Qnaire> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Welcome to FitTrack!'),
