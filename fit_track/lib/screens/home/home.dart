@@ -21,8 +21,14 @@ class _HomeState extends State<Home> {
     ProgressPage(Colors.lightGreen), // place holder color
     SettingsPage(Colors.grey), // place holder color
   ];
+  final _appBarText = [
+    'Home',
+    'Journal',
+    'Progress',
+    'Settings',
+  ];
   final authService _auth = authService();
-  var isNewUser = false; // change this to False to debug home page faster
+  var isNewUser = true; // change this to False to debug home page faster
 
   void signout() async {
     await _auth.signout();
@@ -47,19 +53,24 @@ class _HomeState extends State<Home> {
         ? Scaffold(
             backgroundColor: Colors.blueGrey[100],
             appBar: AppBar(
-              title: Text("Home"),
+              title: Text(_appBarText[_currentIndex]),
+              // title: Text("Home"),
               centerTitle: true,
-              backgroundColor: Colors.blueGrey[400],
+              backgroundColor: Colors.green[400],
               actions: [
                 TextButton.icon(
-                  icon: Icon(Icons.person),
-                  label: Text("Sign out"),
+                  icon: Icon(Icons.person, color: Colors.white),
+                  label: Text(
+                    "Sign out",
+                    style: TextStyle(color: Colors.white),
+                  ),
                   onPressed: signout,
                 )
               ],
             ),
             body: _children[_currentIndex],
             bottomNavigationBar: BottomNavigationBar(
+              fixedColor: Colors.green[400],
               onTap: onTabTapped,
               currentIndex: _currentIndex,
               type: BottomNavigationBarType.fixed,

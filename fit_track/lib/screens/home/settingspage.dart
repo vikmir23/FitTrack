@@ -7,8 +7,32 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: color,
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(30),
+            child: const ElevatedButton(
+              onPressed: null,
+              child: Text(
+                'Change email',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(30),
+            child: const ElevatedButton(
+              onPressed: null,
+              child: Text(
+                'User Preferences',
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+          ),
+        ],
+        mainAxisSize: MainAxisSize.min,
+      ),
     );
   }
 }
