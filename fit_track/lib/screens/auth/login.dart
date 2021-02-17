@@ -18,6 +18,9 @@ class _loginState extends State<login> {
     if (userResult == null) {
       setState(() => error = "invalid credentials");
     }
+    else { //added
+      Navigator.pop(context);
+    }
   }
 
   @override

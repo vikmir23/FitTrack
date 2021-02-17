@@ -12,10 +12,12 @@ class _AuthState extends State<Auth> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Let\'s get started'),
+        centerTitle: true,
+        title: Text('FitTrack'),
       ),
       body: Center(
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
               child: Text("Sign in"),
