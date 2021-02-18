@@ -13,8 +13,9 @@ default_app = initialize_app(cred)
 db = firestore.client()
 workouts_ref = db.collection(u'workout')
 test_ref = db.collection(u'TESTING')
+user_ref = db.collection(u'users')
 
-
+#test endpoint
 @app.route('/test', methods = ['GET'])
 def test():
     try:
@@ -24,15 +25,17 @@ def test():
         
     except Exception as e:
         return f"An Error Occured: {e}"
-# @app.route('/addWorkout', methods = ["POST"])
-# def addWorkout():
-#     try:
-#         data = request.json
-#         data["dateAdded"] = datetime.now()
-#         workouts_ref.add(data)
-#         return jsonify({"success": True}), 200
-#     except Exception as e:
-#         return f"An Error Occurred: {e}"
+
+#workout endpoints
+@app.route('/addWorkout', methods = ["POST"])
+def addWorkout():
+    try:
+        data = request.json
+        data["dateAdded"] = datetime.now()
+        workouts_ref.add(data)
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        return f"An Error Occurred: {e}"
 
 @app.route('/allWorkouts', methods = ['GET'])
 def getAllWorkouts():
@@ -57,11 +60,35 @@ def getWorkouts():
         return jsonify(ret), 200
     except Exception as e:
         return f"An Error Occurred: {e}"
+
 #TODO
 #create PUT endpoint to edit workouts
 
+#user endpoints
+@app.route('/addUser', methods = ['POST'])
+def addUser():
+    try:
+        data = request.json
+        user_ref.add(data)
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        return f"An Error Occured: {e}"
 
-#create endpoints for user
+@app.route('/getUser', methods = ['GET'])
+def getUser():
+    try:
+        args = request.args
+        if "authID" in args:
+            data = user_ref.where("authID", "==", args["authID"]).stream()
+        else:
+            data = user_ref.stream()
+        
+        retData = [d.to_dict() for d in data]
+        return jsonify(ret), 200
+    except Exception as e:
+        return f"An Error Occured: {e}"
+
+# @app.route('/updateUser', methods)
 
 
         
