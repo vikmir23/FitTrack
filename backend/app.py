@@ -15,6 +15,11 @@ workouts_ref = db.collection(u'workout')
 test_ref = db.collection(u'TESTING')
 user_ref = db.collection(u'users')
 
+#base
+@app.route('/')
+def base():
+ return '<h1>Yeah, this is Fittrack</h1>'
+
 #test endpoint
 @app.route('/test', methods = ['GET'])
 def test():
@@ -35,9 +40,6 @@ Workout schema
         each element in list contains
         activity: string
         reps: int
-    muscles: list (muscles used during this workout)
-        muscle: string
-        intensity: int
 '''
 #workout endpoints
 @app.route('/addWorkout', methods = ["POST"])
@@ -136,4 +138,5 @@ def getUser():
 
 port = int(os.environ.get('PORT', 8080))
 if __name__ == '__main__':
+    print("hello")
     app.run(threaded=True, host='0.0.0.0', port=port)

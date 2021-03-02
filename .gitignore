@@ -2,4 +2,5 @@
 cs125.code-workspace
 .vscode
 env
-SecretKey.json
+*.json
+zappa*
