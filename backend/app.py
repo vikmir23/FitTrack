@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify
 from firebase_admin import credentials, firestore, initialize_app
 import datetime
+from objects import User, Workout
 
 #initialize Flask app
 
@@ -66,7 +67,7 @@ def getWorkouts():
     try:
         args = request.args
 
-        if "userId" in args:
+        if "userID" in args:
             data = workouts_ref.where("userID", '==', args["userID"]).stream()
         else:
             data = workouts_ref.stream()
@@ -101,8 +102,8 @@ authId: string (id given to user on login)
 gender: string
 age: number
 height: number
-currweight: number
-goalweight: number
+weight: number
+goal: number
 '''
 
 #user endpoints
