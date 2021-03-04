@@ -1,4 +1,6 @@
 import datetime
+# import numpy as np
+
 
 '''
 Workout schema
@@ -27,6 +29,11 @@ class Exercise:
         return self.intensity
 
 
+'''
+    userId: string,
+    date: dateTime,
+    activities: list of Exercises
+'''
 class Workout:
     def __init__(self, userId, date, activities):
         self.userId = userId
@@ -60,7 +67,7 @@ class User:
     def setUserWorkouts(self, workoutsList):
         self.workouts = workoutsList
 
-    
+    #get methods
     def getAuthId(self):
         return self.authId
     
@@ -79,4 +86,26 @@ class User:
     def getGoal(self):
         return (self.goal, self.goalStr)
 
+    
+    # #editting attribute methods
+    # def changeGoal(self, goal):
+    #     self.goal = goal
+    #     self.goalStr = goals[goal]
+
+    # def changeWeight(self, weight):
+    #     self.weight = weight
+    
+    # def changeAge(self, age):
+    #     self.age = age
+
+    # def changeHeight(self, height):
+    #     self.height = height
+    
+
+
+    '''
+    Looks at previous workouts and users goal to generate 
+    '''
+    def getWorkoutRec(self):
+        pass
     

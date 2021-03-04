@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from firebase_admin import credentials, firestore, initialize_app
-import datetime
+from datetime import datetime
 from objects import User, Workout
 
 #initialize Flask app
@@ -43,17 +43,17 @@ Workout schema
         reps: int
 '''
 #workout endpoints
-@app.route('/addWorkout', methods = ["POST"])
+@app.route('/workouts/addWorkout', methods = ["POST"])
 def addWorkout():
     try:
-        data = request.json
+        data = request.get_json(force = True)
         data["dateAdded"] = datetime.now()
         workouts_ref.add(data)
         return jsonify({"success": True}), 200
     except Exception as e:
         return f"An Error Occurred: {e}"
 
-@app.route('/allWorkouts', methods = ['GET'])
+@app.route('/workouts/allWorkouts', methods = ['GET'])
 def getAllWorkouts():
     try:
         data = workouts_ref.stream()
@@ -62,29 +62,21 @@ def getAllWorkouts():
     except Exception as e:
         return f"An Error Occurred: {e}"
 
-@app.route('/workoutsByUser', methods = ["GET"])
-def getWorkouts():
+@app.route('/workouts/user/<userId>', methods = ["GET"])
+def getWorkouts(userId):
     try:
-        args = request.args
-
-        if "userID" in args:
-            data = workouts_ref.where("userID", '==', args["userID"]).stream()
-        else:
-            data = workouts_ref.stream()
+        data = workouts_ref.where("userId", '==', userId).stream()
 
         ret = [d.to_dict() for d in data]
         return jsonify(ret), 200
     except Exception as e:
         return f"An Error Occurred: {e}"
 
-@app.route('/workoutsByUserDate', methods = ['GET'])
-def getWorkoutsByDate():
+@app.route('/workouts/date/<userId>', methods = ['GET'])
+def getWorkoutsByDate(userId):
     try:
-        args = request.args
-        data = []
-        if 'userId' in args:
-            q = workouts_ref.where("userID", '==', args["userID"]).order_by(u"dateAdded")
-            data = q.stream()
+        q = workouts_ref.where("userId", '==', userId).order_by("dateAdded")
+        data = q.stream()
         ret = [d.to_dict() for d in data]
         return jsonify(ret), 200
         
@@ -107,7 +99,7 @@ goal: number
 '''
 
 #user endpoints
-@app.route('/addUser', methods = ['POST'])
+@app.route('/user/addUser', methods = ['POST'])
 def addUser():
     try:
         data = request.json
@@ -116,22 +108,17 @@ def addUser():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/getUser', methods = ['GET'])
-def getUser():
+@app.route('/user/getUser/authId', methods = ['GET'])
+def getUser(authId):
     try:
-        args = request.args
-        if "authID" in args:
-            data = user_ref.where("authID", "==", args["authID"]).stream()
-        else:
-            data = user_ref.stream()
+        data = user_ref.where("authId", "==", authId).stream()
         
         retData = [d.to_dict() for d in data]
         return jsonify(ret), 200
     except Exception as e:
         return f"An Error Occured: {e}"
 
-# @app.route('/updateUser', methods)
-
+# @app.route('')
 
         
 
@@ -139,5 +126,4 @@ def getUser():
 
 port = int(os.environ.get('PORT', 8080))
 if __name__ == '__main__':
-    print("hello")
     app.run(threaded=True, host='0.0.0.0', port=port)
