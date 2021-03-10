@@ -41,6 +41,7 @@ Workout schema
         each element in list contains
         activity: string
         reps: int
+        intensity: int
 '''
 #workout endpoints
 @app.route('/workouts/addWorkout', methods = ["POST"])
@@ -72,16 +73,7 @@ def getWorkouts(userId):
     except Exception as e:
         return f"An Error Occurred: {e}"
 
-@app.route('/workouts/date/<userId>', methods = ['GET'])
-def getWorkoutsByDate(userId):
-    try:
-        q = workouts_ref.where("userId", '==', userId).order_by("dateAdded")
-        data = q.stream()
-        ret = [d.to_dict() for d in data]
-        return jsonify(ret), 200
-        
-    except Exception as e:
-        return f"An Error Occurred: {e}"
+
 
 #TODO
 #create PUT endpoint to edit workouts
@@ -98,6 +90,10 @@ weight: number
 goal: number
 '''
 
+'''
+for the case getting users, perform a join between workouts and users on authId/userId
+'''
+
 #user endpoints
 @app.route('/user/addUser', methods = ['POST'])
 def addUser():
@@ -108,19 +104,52 @@ def addUser():
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/user/getUser/authId', methods = ['GET'])
+@app.route('/user/getUser/<authId>', methods = ['GET'])
 def getUser(authId):
     try:
-        data = user_ref.where("authId", "==", authId).stream()
+        data = user_ref.where("authId", "==", authId).get()
+        workoutData = workouts_ref.where("userId", "==", authId).stream()
+
+        wList = [w.to_dict() for w in workoutData]
+
+        ret = data.to_dict()
+
+        ret["workouts"] = wList
         
-        retData = [d.to_dict() for d in data]
         return jsonify(ret), 200
     except Exception as e:
         return f"An Error Occured: {e}"
 
-# @app.route('')
+@app.route('/user/editUser/<authId>')
+def editUser(authId):
+    try:
+        pass
+    except Exception as e:
+        return f"An Error Occured: {e}"
 
-        
+
+@app.route('/user/recWorkout/<authId>', methods=['GET'])
+def getWorkoutRec(authId):
+    try:
+        data = user_ref.where("authId", "==", authId).get()
+        workoutData = workouts_ref.where("userId", "==", authId).stream()
+
+        wList = [w.to_dict() for w in workoutData]
+
+        uData = data.to_dict()
+
+        user = User(authId, uData["gender"], uData["age"], uData["height"], uData["weight"], uData["goal"])
+
+        user.setUserWorkouts(wList)
+
+        # rec = user.getWorkoutRec()
+        rec = user
+        return jsonify(rec), 200
+
+
+
+    except Exception as e:
+        return f"An Error Occurred: {e}"
 
 
 

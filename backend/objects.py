@@ -65,7 +65,15 @@ class User:
         self.workouts = []
     
     def setUserWorkouts(self, workoutsList):
-        self.workouts = workoutsList
+        workout = []
+        for w in workoutsList:
+            activities = []
+            act = w["activities"]
+            for a in act:
+                A = Exercise(a["activity"], a["reps"], a["intensity"])
+                activities.append(A)
+            workout.append( Workout(w["date"], activities))
+        self.workouts = workout
 
     #get methods
     def getAuthId(self):
@@ -85,27 +93,14 @@ class User:
 
     def getGoal(self):
         return (self.goal, self.goalStr)
-
     
-    # #editting attribute methods
-    # def changeGoal(self, goal):
-    #     self.goal = goal
-    #     self.goalStr = goals[goal]
-
-    # def changeWeight(self, weight):
-    #     self.weight = weight
-    
-    # def changeAge(self, age):
-    #     self.age = age
-
-    # def changeHeight(self, height):
-    #     self.height = height
-    
-
+    def getWeeksWorkouts(self):
+        pass
 
     '''
     Looks at previous workouts and users goal to generate 
     '''
     def getWorkoutRec(self):
-        pass
+        workouts = self.workouts
+        
     
