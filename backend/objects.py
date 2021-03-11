@@ -33,6 +33,7 @@ class Exercise:
     userId: string,
     date: dateTime,
     activities: list of Exercises
+    weather: weather during workout
 '''
 class Workout:
     def __init__(self, userId, date, activities):
@@ -50,6 +51,9 @@ class Workout:
 
     def getActivities(self):
         return self.activities
+    
+    def getWeather(self):
+        return self.weather
     
 
 class User:
@@ -101,7 +105,11 @@ class User:
         weekWorkouts = []
         for w in self.workouts:
             d = w.getDate()
+            # temp = d.toDate()
+            # dt = datetime(temp)
+            # print(now)
             print(type(d))
+            # print(temp)
             # print(w.getDate())
 
 
