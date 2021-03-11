@@ -4,4 +4,3 @@ cs125.code-workspace
 env
 *.json
 zappa*
-*.lock
