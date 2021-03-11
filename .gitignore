@@ -1,11 +1,6 @@
 # visual studios workspace
 cs125.code-workspace
 .vscode
-<<<<<<< HEAD
 env
-=======
-env
-SecretKey.json
-
-pubspec.lock
->>>>>>> ui
+*.json
+zappa*
