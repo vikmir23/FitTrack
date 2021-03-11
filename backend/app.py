@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from firebase_admin import credentials, firestore, initialize_app
-from datetime import datetime
+from datetime import *
 from objects import User, Workout
 
 #initialize Flask app
@@ -14,7 +14,7 @@ default_app = initialize_app(cred)
 db = firestore.client()
 workouts_ref = db.collection(u'workout')
 test_ref = db.collection(u'TESTING')
-user_ref = db.collection(u'users')
+user_ref = db.collection(u'user')
 
 #base
 @app.route('/')
@@ -98,7 +98,7 @@ for the case getting users, perform a join between workouts and users on authId/
 @app.route('/user/addUser', methods = ['POST'])
 def addUser():
     try:
-        data = request.json
+        data = request.get_json(force=True)
         user_ref.add(data)
         return jsonify({"success": True}), 200
     except Exception as e:
@@ -108,11 +108,12 @@ def addUser():
 def getUser(authId):
     try:
         data = user_ref.where("authId", "==", authId).get()
+        if(len(data) != 1):
+            raise Exception("invalid authId")
         workoutData = workouts_ref.where("userId", "==", authId).stream()
-
         wList = [w.to_dict() for w in workoutData]
-
-        ret = data.to_dict()
+        ret = data[0].to_dict()
+        
 
         ret["workouts"] = wList
         
@@ -120,31 +121,31 @@ def getUser(authId):
     except Exception as e:
         return f"An Error Occured: {e}"
 
-@app.route('/user/editUser/<authId>')
-def editUser(authId):
-    try:
-        pass
-    except Exception as e:
-        return f"An Error Occured: {e}"
+# @app.route('/user/editUser/<authId>')
+# def editUser(authId):
+#     try:
+#         pass
+#     except Exception as e:
+#         return f"An Error Occured: {e}"
 
 
 @app.route('/user/recWorkout/<authId>', methods=['GET'])
 def getWorkoutRec(authId):
     try:
         data = user_ref.where("authId", "==", authId).get()
+        if(len(data) != 1):
+            raise Exception("invalid authId")
         workoutData = workouts_ref.where("userId", "==", authId).stream()
 
         wList = [w.to_dict() for w in workoutData]
 
-        uData = data.to_dict()
+        uData = data[0].to_dict()
 
         user = User(authId, uData["gender"], uData["age"], uData["height"], uData["weight"], uData["goal"])
-
         user.setUserWorkouts(wList)
-
-        # rec = user.getWorkoutRec()
-        rec = user
-        return jsonify(rec), 200
+        rec = user.getWorkoutRec()
+        
+        return jsonify(15), 200
 
 
 

@@ -1,5 +1,5 @@
-import datetime
-# import numpy as np
+from datetime import *
+import numpy as np
 
 
 '''
@@ -46,7 +46,7 @@ class Workout:
         self.activities = activities
     
     def getDate(self):
-        return date
+        return self.date
 
     def getActivities(self):
         return self.activities
@@ -55,13 +55,15 @@ class Workout:
 class User:
     goals = ["Muscle-Strengthening", "Light Exercise", "Moderate Exercise"]
     def __init__(self, authId, gender, age, height, weight, goal):
+        self.goals = ["Muscle-Strengthening",
+                      "Light Exercise", "Moderate Exercise"]
         self.authId = authId
         self.gender = gender
         self.age = age
         self.height = height
         self.weight = weight
         self.goal = goal
-        self.goalStr = goals[goal]
+        self.goalStr = self.goals[goal]
         self.workouts = []
     
     def setUserWorkouts(self, workoutsList):
@@ -72,7 +74,7 @@ class User:
             for a in act:
                 A = Exercise(a["activity"], a["reps"], a["intensity"])
                 activities.append(A)
-            workout.append( Workout(w["date"], activities))
+            workout.append( Workout(w["dateAdded"], activities))
         self.workouts = workout
 
     #get methods
@@ -95,12 +97,19 @@ class User:
         return (self.goal, self.goalStr)
     
     def getWeeksWorkouts(self):
-        pass
+        now = datetime.now()
+        weekWorkouts = []
+        for w in self.workouts:
+            d = w.getDate()
+            print(type(d))
+            # print(w.getDate())
+
 
     '''
     Looks at previous workouts and users goal to generate 
     '''
     def getWorkoutRec(self):
         workouts = self.workouts
+        week  = self.getWeeksWorkouts()
         
     
