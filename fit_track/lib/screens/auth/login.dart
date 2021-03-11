@@ -17,13 +17,10 @@ class _loginState extends State<login> {
     dynamic userResult = await _auth.signInWithEmail(email, password);
     if (userResult == null) {
       setState(() => error = "invalid credentials");
-    }
-<<<<<<< HEAD
-=======
-    else { //added
+    } else {
+      //added
       Navigator.pop(context);
     }
->>>>>>> ui
   }
 
   @override

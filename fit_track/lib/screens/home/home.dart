@@ -1,9 +1,5 @@
 import 'package:fit_track/services/auth.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:provider/provider.dart';
-
-=======
 import 'package:fit_track/screens/qnaire/qnaire.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
@@ -14,16 +10,12 @@ import 'journalpage.dart';
 import 'progresspage.dart';
 import 'settingspage.dart';
 
->>>>>>> ui
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-<<<<<<< HEAD
-  final authService _auth = authService();
-=======
   int _currentIndex = 0;
   bool justLoggedIn = true;
   final List<Widget> _children = [
@@ -41,29 +33,10 @@ class _HomeState extends State<Home> {
   final authService _auth = authService();
   var isNewUser = true; // change this to False to debug home page faster
 
->>>>>>> ui
   void signout() async {
     await _auth.signout();
   }
 
-<<<<<<< HEAD
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey[100],
-      appBar: AppBar(
-        title: Text("Contact Tracing"),
-        backgroundColor: Colors.blueGrey[400],
-        actions: [
-          TextButton.icon(
-            icon: Icon(Icons.person),
-            label: Text("Signout"),
-            onPressed: signout,
-          )
-        ],
-      ),
-    );
-=======
   void _completed() {
     setState(() {
       isNewUser = false;
@@ -176,17 +149,23 @@ class _HomeState extends State<Home> {
               ),
             ),
           );
->>>>>>> ui
   }
 }
 
-void _getContextData() async{
-  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+void _getContextData() async {
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
   WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
-  Weather w = await wf.currentWeatherByLocation(position.latitude, position.longitude);
+  Weather w =
+      await wf.currentWeatherByLocation(position.latitude, position.longitude);
   double temp = w.temperature.fahrenheit;
   print("Temperature: $temp Fahrenheit");
 
   DateTime now = DateTime.now();
-  print("Time: " + now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString());
+  print("Time: " +
+      now.hour.toString() +
+      ":" +
+      now.minute.toString() +
+      ":" +
+      now.second.toString());
 }
