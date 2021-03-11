@@ -3,4 +3,8 @@ cs125.code-workspace
 .vscode
 env
 *.json
+<<<<<<< HEAD
 zappa*
+=======
+zappa*
+>>>>>>> a3e21fbca7929eb06071abbc234ff65b07bb512f
