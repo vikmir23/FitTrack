@@ -2,6 +2,8 @@ import 'package:fit_track/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fit_track/screens/qnaire/qnaire.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:weather/weather.dart';
 
 import 'homepage.dart';
 import 'journalpage.dart';
@@ -15,6 +17,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
+  bool justLoggedIn = true;
   final List<Widget> _children = [
     HomePage(Colors.blue), // place holder color
     JournalPage(Colors.white), // place holder color
@@ -48,10 +51,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (justLoggedIn) {
+      _getContextData();
+      justLoggedIn = false;
+    }
     return isNewUser ==
             false // If user is NOT new then display New User form else just home screen
         ? Scaffold(
-            backgroundColor: Colors.blueGrey[100],
+            backgroundColor: Colors.white,
             appBar: AppBar(
               title: Text(_appBarText[_currentIndex]),
               // title: Text("Home"),
@@ -105,8 +112,9 @@ class _HomeState extends State<Home> {
                   Text(
                     'Welcome to FitTrack!',
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: 32,
                       color: Colors.blue,
+                      fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -125,7 +133,10 @@ class _HomeState extends State<Home> {
                     child: RaisedButton(
                       color: Colors.blue,
                       textColor: Colors.white,
-                      child: Text('Take Questionnaire'),
+                      child: Text(
+                        'Take Questionnaire',
+                        style: TextStyle(fontSize: 16),
+                      ),
                       onPressed: () {
                         Navigator.push(
                             context,
@@ -139,4 +150,15 @@ class _HomeState extends State<Home> {
             ),
           );
   }
+}
+
+void _getContextData() async{
+  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
+  Weather w = await wf.currentWeatherByLocation(position.latitude, position.longitude);
+  double temp = w.temperature.fahrenheit;
+  print("Temperature: $temp Fahrenheit");
+
+  DateTime now = DateTime.now();
+  print("Time: " + now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString());
 }

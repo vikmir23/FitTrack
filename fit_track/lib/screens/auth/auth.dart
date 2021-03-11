@@ -26,6 +26,7 @@ class _AuthState extends State<Auth> {
                     context, MaterialPageRoute(builder: (context) => login()));
               },
             ),
+            SizedBox(width: 20),
             ElevatedButton(
               child: Text("Get Started"),
               onPressed: () {
