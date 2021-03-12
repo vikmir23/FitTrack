@@ -14,7 +14,7 @@ class JournalPage extends StatefulWidget {
 }
 
 class _JournalPageState extends State<JournalPage> {
-  List<String> entries = [];
+  List<Workout> entries = [];
   List<Workout> workouts = [Workout()];
 
   String inputActivity = '';
@@ -32,6 +32,12 @@ class _JournalPageState extends State<JournalPage> {
             sets: inputSets,
             intensity: inputIntensity,
           ));
+      entries.add(Workout(
+        activity: inputActivity,
+        reps: inputReps,
+        sets: inputSets,
+        intensity: inputIntensity,
+      ));
     });
   }
 
@@ -43,7 +49,7 @@ class _JournalPageState extends State<JournalPage> {
       },
       body: jsonEncode(<String, dynamic>{
         'userId': Provider.of<User>(context, listen: false).uid,
-        'activities': workouts,
+        'activities': entries,
       }),
     );
     print('Response status: ${response.statusCode}');

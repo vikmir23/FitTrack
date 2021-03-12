@@ -4,25 +4,92 @@ import 'package:fit_track/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final Color color;
 
   HomePage(this.color);
 
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  var jsonResponse;
+  bool isLoading = false;
+  int index = 1;
+
+  String exercise = '';
+  String recReps = '';
+  String recSets = '';
+  String recIntensity = '';
+
+  String numExercises = '';
+  String averageIntensity = '';
+  String caloriesBurned = '435';
+
+  void initState() {
+    super.initState();
+    _tempf(context);
+  }
+
   _tempf(context) async {
+    setState(() {
+      isLoading = true;
+    });
     var url =
         'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/user/recWorkout/' +
             Provider.of<User>(context, listen: false).uid;
     var response = await http.get(url);
     if (response.statusCode == 200) {
-      var jsonResponse = convert.jsonDecode(response.body);
-      print(jsonResponse);
+      jsonResponse = convert.jsonDecode(response.body);
+      exercise = jsonResponse['activities'][0]['activity'];
+      recReps = '${jsonResponse['activities'][0]['reps']}';
+      recSets = '${jsonResponse['activities'][0]['sets']}';
+      recIntensity = '${jsonResponse['activities'][0]['intensity']}';
+
+      averageIntensity =
+          '${jsonResponse['activities'].map((m) => m['intensity']).reduce((a, b) => a + b) / jsonResponse['activities'].length}';
+      numExercises = '${jsonResponse['activities'].length}';
     }
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  _nextRecommendation() {
+    setState(() {
+      exercise = jsonResponse['activities'][index]['activity'];
+      recReps = '${jsonResponse['activities'][index]['reps']}';
+      recSets = '${jsonResponse['activities'][index]['sets']}';
+      recIntensity = '${jsonResponse['activities'][index]['intensity']}';
+      index++;
+    });
+  }
+
+  _sendRectoBackEnd() async {
+    var response = await http.post(
+      'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/addWorkout',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: convert.jsonEncode(<String, dynamic>{
+        'userId': Provider.of<User>(context, listen: false).uid,
+        'activities': [
+          {
+            'activity': exercise,
+            'reps': int.parse(recReps),
+            'sets': int.parse(recSets),
+            'intensity': int.parse(recIntensity),
+          }
+        ]
+      }),
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
   }
 
   @override
   Widget build(BuildContext context) {
-    _tempf(context);
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
@@ -71,10 +138,49 @@ class HomePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(1.0),
                 child: Center(
-                  child: Text(
-                    'RECOMMENDATION',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: isLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                new AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Column(
+                          children: [
+                            Text(
+                              exercise,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Reps: $recReps',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Sets: $recSets',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'Intensity: $recIntensity',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                 ),
               ),
             ),
@@ -84,12 +190,12 @@ class HomePage extends StatelessWidget {
             children: [
               ElevatedButton(
                 child: Text("Accept"),
-                onPressed: null,
+                onPressed: _sendRectoBackEnd,
               ),
               SizedBox(width: 20),
               ElevatedButton(
-                child: Text("Get Another Recommendation"),
-                onPressed: null,
+                child: Text("Get Next Recommendation"),
+                onPressed: _nextRecommendation,
               ),
             ],
           ),
@@ -97,7 +203,7 @@ class HomePage extends StatelessWidget {
           Align(
             alignment: Alignment.topLeft,
             child: Text(
-              "Current Workout",
+              "Current Workout Data",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -107,9 +213,23 @@ class HomePage extends StatelessWidget {
           SizedBox(height: 20),
           Align(
             alignment: Alignment.topLeft,
-            child: ElevatedButton(
-              child: Text("Add Workout"),
-              onPressed: null,
+            child: Text(
+              'Number of exercises: $numExercises',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Average Intensity: $averageIntensity',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Calories burned: $caloriesBurned',
+              style: TextStyle(fontSize: 16),
             ),
           ),
         ],
