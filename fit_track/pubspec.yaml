@@ -43,6 +43,8 @@ dependencies:
   weather: ^1.2.4
   fl_chart: ^0.20.1
 
+  pedometer: ^2.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
