@@ -1,6 +1,9 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fit_track/models/user.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 import 'dart:async';
 
 import 'package:pedometer/pedometer.dart';
@@ -26,12 +29,18 @@ class _ProgressPageState extends State<ProgressPage> {
   Stream<StepCount> _stepCountStream;
   Stream<PedestrianStatus> _pedestrianStatusStream;
   String _status = '?', _steps = '?';
-  String _workouts = '0';
+  int numOfWorkouts = 0;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+  }
+
+  void updateWorkouts() {
+    setState(() {
+      numOfWorkouts = numOfWorkouts;
+    });
   }
 
   void onStepCount(StepCount event) {
@@ -75,15 +84,23 @@ class _ProgressPageState extends State<ProgressPage> {
     if (!mounted) return;
   }
 
-  void workoutError(error) {
-    print('workoutError: $error');
-    setState(() {
-      _workouts = '0';
-    });
+  _tempf(context) async {
+    var url =
+        'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/user/' +
+            Provider.of<User>(context, listen: false).uid;
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body) as List;
+      setState(() {
+        numOfWorkouts = jsonResponse.length;
+      });
+      print('$numOfWorkouts');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    _tempf(context);
     return SingleChildScrollView(
       child: Container(
         margin: EdgeInsets.all(20),
@@ -136,7 +153,7 @@ class _ProgressPageState extends State<ProgressPage> {
                           height: 50,
                         ),
                         Text(
-                          _workouts,
+                          numOfWorkouts.toString(),
                           style: TextStyle(
                             fontSize: 24,
                             color: Colors.white,
