@@ -165,37 +165,23 @@ class User:
         activities = []
         
         if index == -1:
-            biData = exercise_ref.where("muscles", "==", "biceps").get()
-            biIndex = []
-            for i in range(6):
-                biIndex.append(random.randint(0,len(biData)))
-            baIndex = []
-            baData = exercise_ref.where("muscles", "==", "back").get()
-            for i in range(6):
-                baIndex.append(random.randint(0, len(baData)))
-            
-            for i in range(6):
-                biDict = dict()
-                fData = biData[biIndex[i]].to_dict()
-                biDict["activity"] = fData["name"]
-                activities.append(biDict)
-
-                baDict = dict()
-                fData = baData[baIndex[i]].to_dict()
-                baDict["activity"] = fData["name"]
-                activities.append(baDict)
+            activities = self.pull(exercise_ref)
         
         else:
             muscles = musedRecent[i]
             for m in muscles:
                 if m == 'back' or m == 'biceps':
-                    pass
+                    activities = self.pull(exercise_ref)
+                    break
                 elif m == 'triceps' or m == 'chest' or m == 'shoulders':
-                    pass
+                    activities = self.push(exercise_ref)
+                    break
                 elif m == 'hamstrings' or m == 'quads' or m == 'calves':
-                    pass
+                    activities = self.legs(exercise_ref)
+                    break
                 elif m == "abdominals":
-                    pass
+                    activities = self.abs(exercise_ref)
+                    break
 
         #Muscle Strengthening intensity 9
         #sets 5
@@ -228,3 +214,124 @@ class User:
         retDict["activities"] = activities
         return retDict
     
+    #day 1 will be targetting biceps/back
+    def pull(self, exercise_ref):
+        activities = []
+
+        biData = exercise_ref.where(
+            "muscles", "==", "biceps").get()
+        biIndex = []
+        for i in range(6):
+            biIndex.append(random.randint(0,len(biData)))
+        baIndex = []
+        baData = exercise_ref.where("muscles", "==", "back").get()
+        for i in range(6):
+            baIndex.append(random.randint(0, len(baData)))
+        
+        for i in range(6):
+            biDict = dict()
+            fData = biData[biIndex[i]].to_dict()
+            biDict["activity"] = fData["name"]
+            activities.append(biDict)
+
+            baDict = dict()
+            fData = baData[baIndex[i]].to_dict()
+            baDict["activity"] = fData["name"]
+            activities.append(baDict)
+
+        return activities
+
+    #day 2 will be targetting triceps/chest/shoulders
+    def push(self, exercise_ref):
+        activities = []
+
+        tData = exercise_ref.where(
+            "muscles", "==", "triceps").get()
+        tIndex = []
+        for i in range(4):
+            tIndex.append(random.randint(0, len(tData)))
+        
+        cIndex = []
+        cData = exercise_ref.where("muscles", "==", "chest").get()
+        for i in range(4):
+            cIndex.append(random.randint(0, len(cData)))
+        
+        sIndex = []
+        sData = exercise_ref.where("muscles", "==", "shoulders").get()
+        for i in range(4):
+            sIndex.append(random.randint(0, len(sData)))
+
+
+        for i in range(4):
+            tDict = dict()
+            fData = tData[tIndex[i]].to_dict()
+            tDict["activity"] = fData["name"]
+            activities.append(tDict)
+
+            cDict = dict()
+            fData = cData[cIndex[i]].to_dict()
+            cDict["activity"] = fData["name"]
+            activities.append(cDict)
+
+            sDict = dict()
+            fData = sData[sIndex[i]].to_dict()
+            sDict["activity"] = fData["name"]
+            activities.append(sDict)
+
+        return activities
+
+    #day 3 will be targetting hamstrings/quadriceps/calves
+    def legs(self, exercise_ref):
+        activities = []
+
+        hData = exercise_ref.where(
+            "muscles", "==", "hamstrings").get()
+        hIndex = []
+        for i in range(4):
+            hIndex.append(random.randint(0, len(hData)))
+
+        qIndex = []
+        qData = exercise_ref.where("muscles", "==", "quadriceps").get()
+        for i in range(4):
+            qIndex.append(random.randint(0, len(qData)))
+
+        cIndex = []
+        cData = exercise_ref.where("muscles", "==", "calves").get()
+        for i in range(4):
+            cIndex.append(random.randint(0, len(cData)))
+
+        for i in range(4):
+            hDict = dict()
+            fData = hData[hIndex[i]].to_dict()
+            tDict["activity"] = fData["name"]
+            activities.append(hDict)
+
+            qDict = dict()
+            fData = qData[qIndex[i]].to_dict()
+            qDict["activity"] = fData["name"]
+            activities.append(qDict)
+
+            cDict = dict()
+            fData = cData[cIndex[i]].to_dict()
+            cDict["activity"] = fData["name"]
+            activities.append(cDict)
+
+        return activities
+
+    #day 4 will be abdominals
+    def abs(self, exercise_ref):
+        activities = []
+
+        aData = exercise_ref.where(
+            "muscles", "==", "abdominals").get()
+        aIndex = []
+        for i in range(12):
+            aIndex.append(random.randint(0, len(aData)))
+
+        for i in range(12):
+            aDict = dict()
+            fData = aData[aIndex[i]].to_dict()
+            aDict["activity"] = fData["name"]
+            activities.append(aDict)
+
+        return activities
