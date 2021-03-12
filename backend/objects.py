@@ -333,5 +333,6 @@ class User:
             fData = aData[aIndex[i]].to_dict()
             aDict["activity"] = fData["name"]
             activities.append(aDict)
+            
 
         return activities
