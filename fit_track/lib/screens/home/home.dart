@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
     'Settings',
   ];
   final authService _auth = authService();
-  var isNewUser = true; // change this to False to debug home page faster
+  var isNewUser = false; // change this to False to debug home page faster
 
   void signout() async {
     await _auth.signout();

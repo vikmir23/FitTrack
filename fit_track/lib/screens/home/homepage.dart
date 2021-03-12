@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fit_track/models/user.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 
 class HomePage extends StatelessWidget {
   final Color color;
 
   HomePage(this.color);
 
+  _tempf(context) async {
+    var url =
+        'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/user/recWorkout/' +
+            Provider.of<User>(context, listen: false).uid;
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonResponse = convert.jsonDecode(response.body);
+      print(jsonResponse);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    _tempf(context);
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
@@ -81,7 +97,7 @@ class HomePage extends StatelessWidget {
           Align(
             alignment: Alignment.topLeft,
             child: Text(
-              "Workout",
+              "Current Workout",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

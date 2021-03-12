@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'package:fit_track/models/user.dart';
 
 class JournalPage extends StatefulWidget {
   final Color color;
@@ -11,13 +15,39 @@ class JournalPage extends StatefulWidget {
 
 class _JournalPageState extends State<JournalPage> {
   List<String> entries = [];
+  List<Workout> workouts = [Workout()];
 
-  String valueText = '';
+  String inputActivity = '';
+  String inputReps = '';
+  String inputSets = '';
+  String inputIntensity = '';
 
   _addItem() {
     setState(() {
-      entries.insert(0, valueText);
+      workouts.insert(
+          0,
+          Workout(
+            activity: inputActivity,
+            reps: inputReps,
+            sets: inputSets,
+            intensity: inputIntensity,
+          ));
     });
+  }
+
+  _workoutToBackEnd() async {
+    var response = await http.post(
+      'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/addWorkout',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'userId': Provider.of<User>(context, listen: false).uid,
+        'activities': workouts,
+      }),
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
   }
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
@@ -26,20 +56,52 @@ class _JournalPageState extends State<JournalPage> {
         builder: (context) {
           return AlertDialog(
             title: Text('Add Entry'),
-            content: TextField(
-              onChanged: (value) {
-                setState(() {
-                  valueText = value;
-                });
-              },
-              decoration: InputDecoration(hintText: "Reps - Exercise - Time - Date"),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputActivity = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                        hintText: "Activity - Ex: Shoulder press"),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputReps = value;
+                      });
+                    },
+                    decoration: InputDecoration(hintText: "Reps - Ex: 60"),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputSets = value;
+                      });
+                    },
+                    decoration: InputDecoration(hintText: "Sets - Ex: 3"),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputIntensity = value;
+                      });
+                    },
+                    decoration:
+                        InputDecoration(hintText: "Intensity - Ex: 8 (Heavy)"),
+                  ),
+                ],
+              ),
             ),
             actions: <Widget>[
               ElevatedButton(
                 child: Text('CANCEL'),
                 onPressed: () {
                   setState(() {
-                    valueText = '';
+                    inputActivity = '';
                     Navigator.pop(context);
                   });
                 },
@@ -48,7 +110,7 @@ class _JournalPageState extends State<JournalPage> {
                 child: Text('OK'),
                 onPressed: () {
                   setState(() {
-                    if (valueText != '') {
+                    if (inputActivity != '') {
                       _addItem();
                     }
                     Navigator.pop(context);
@@ -82,6 +144,18 @@ class _JournalPageState extends State<JournalPage> {
               Align(
                 alignment: Alignment.topRight,
                 child: ElevatedButton(
+                  child: Text("Send Data to DB"),
+                  onPressed: () {
+                    _workoutToBackEnd();
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green)),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: ElevatedButton(
                   child: Text("Add Entry"),
                   onPressed: () {
                     _displayTextInputDialog(context);
@@ -97,12 +171,19 @@ class _JournalPageState extends State<JournalPage> {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(0),
-              itemCount: entries.length,
+              itemCount: workouts.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   height: 50,
                   color: Colors.amber[500],
-                  child: Center(child: Text(entries[index])),
+                  child: Center(
+                      child: Text(
+                    workouts[index].printWorkout(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
                 );
               },
               separatorBuilder: (BuildContext context, int index) =>
@@ -117,13 +198,24 @@ class _JournalPageState extends State<JournalPage> {
 }
 
 class Workout {
-  String name;
-  String time;
-  String date;
-  int reps;
-  Workout({this.name = 'Placeholder', this.reps = 30, this.time = '00:00', this.date = '01/01/21'});
+  String activity;
+  String reps;
+  String sets;
+  String intensity;
+  Workout(
+      {this.activity = 'Placeholder',
+      this.reps = "30",
+      this.sets = "3",
+      this.intensity = "8"});
 
   printWorkout() {
-    return "$reps  $name  $time  $date";
+    return "$activity  $reps  $sets  $intensity";
   }
+
+  Map<String, dynamic> toJson() => {
+        'activity': activity,
+        'reps': int.parse(reps),
+        'sets': int.parse(sets),
+        'intensity': int.parse(intensity),
+      };
 }

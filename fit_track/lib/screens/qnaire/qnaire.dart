@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:fit_track/models/user.dart';
 
 enum Gender { male, female, other }
 
@@ -15,6 +19,10 @@ class Qnaire extends StatefulWidget {
 class _QnaireState extends State<Qnaire> {
   String genderValue = 'Other';
   String goalValue = 'Moderate Exercise';
+  int ageValue = 0;
+  int weightValue = 0;
+  int heightValue = 0;
+  List<String> goals = <String>['Muscle-Strengthening','Light Exercise','Moderate Exercise'];
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +94,9 @@ class _QnaireState extends State<Qnaire> {
                         hintText: '',
                         prefixText: ' ',
                       ),
+                      onChanged: (value) {
+                        ageValue = int.parse(value);
+                      },
                     ),
                   ),
                 ],
@@ -107,6 +118,9 @@ class _QnaireState extends State<Qnaire> {
                         hintText: 'lb',
                         prefixText: ' ',
                       ),
+                      onChanged: (value) {
+                        weightValue = int.parse(value);
+                      },
                     ),
                   ),
                 ],
@@ -128,6 +142,9 @@ class _QnaireState extends State<Qnaire> {
                         hintText: 'ft',
                         prefixText: ' ',
                       ),
+                      onChanged: (value) {
+                        heightValue = int.parse(value);
+                      },
                     ),
                   ),
                   SizedBox(width: 20),
@@ -165,11 +182,7 @@ class _QnaireState extends State<Qnaire> {
                         height: 2,
                         color: Colors.blue,
                       ),
-                      items: <String>[
-                        'Muscle-Strengthening',
-                        'Light Exercise',
-                        'Moderate Exercise'
-                      ].map<DropdownMenuItem<String>>((String value) {
+                      items: goals.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -187,15 +200,29 @@ class _QnaireState extends State<Qnaire> {
               SizedBox(height: 20),
               Container(
                 width: double.infinity,
-                child: RaisedButton(
-                    color: Colors.blue,
-                    textColor: Colors.white,
+                child: ElevatedButton(
                     child: Text(
                       'Done',
                       style: TextStyle(fontSize: 16),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       widget._isCompleted();
+                      var response = await http.post(
+                        'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/user/addUser',
+                        headers: <String, String>{
+                          'Content-Type': 'application/json; charset=UTF-8',
+                        },
+                        body: jsonEncode(<String, dynamic>{
+                          'authId': Provider.of<User>(context, listen: false).uid,
+                          'gender': genderValue,
+                          'age': ageValue,
+                          'height': heightValue,
+                          'weight': weightValue,
+                          'goal': goals.indexOf(goalValue),
+                        }),
+                      );
+                      print('Response status: ${response.statusCode}');
+                      print('Response body: ${response.body}');
                       Navigator.pop(context);
                     }),
               ),
