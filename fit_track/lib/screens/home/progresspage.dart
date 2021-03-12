@@ -27,6 +27,8 @@ class _ProgressPageState extends State<ProgressPage> {
   Stream<PedestrianStatus> _pedestrianStatusStream;
   String _status = '?', _steps = '?';
   String _workouts = '0';
+  String _dummyStepValue = '1359';
+  String _dummyWorkoutValue = '7';
 
   @override
   void initState() {
@@ -122,7 +124,7 @@ class _ProgressPageState extends State<ProgressPage> {
                           height: 50,
                         ),
                         Text(
-                          _steps,
+                          _dummyStepValue,
                           style: TextStyle(fontSize: 24, color: Colors.white),
                         ),
                         SizedBox(
@@ -136,7 +138,7 @@ class _ProgressPageState extends State<ProgressPage> {
                           height: 50,
                         ),
                         Text(
-                          _workouts,
+                          _dummyWorkoutValue,
                           style: TextStyle(
                             fontSize: 24,
                             color: Colors.white,
