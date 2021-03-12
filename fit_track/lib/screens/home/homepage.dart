@@ -97,7 +97,7 @@ class HomePage extends StatelessWidget {
           Align(
             alignment: Alignment.topLeft,
             child: Text(
-              "Workout",
+              "Current Workout",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

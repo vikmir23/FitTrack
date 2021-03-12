@@ -15,13 +15,23 @@ class JournalPage extends StatefulWidget {
 
 class _JournalPageState extends State<JournalPage> {
   List<String> entries = [];
-  List<Workout> workouts = [Workout(), Workout()];
+  List<Workout> workouts = [Workout()];
 
-  String valueText = '';
+  String inputActivity = '';
+  String inputReps = '';
+  String inputSets = '';
+  String inputIntensity = '';
 
   _addItem() {
     setState(() {
-      entries.insert(0, valueText);
+      workouts.insert(
+          0,
+          Workout(
+            activity: inputActivity,
+            reps: inputReps,
+            sets: inputSets,
+            intensity: inputIntensity,
+          ));
     });
   }
 
@@ -46,21 +56,52 @@ class _JournalPageState extends State<JournalPage> {
         builder: (context) {
           return AlertDialog(
             title: Text('Add Entry'),
-            content: TextField(
-              onChanged: (value) {
-                setState(() {
-                  valueText = value;
-                });
-              },
-              decoration:
-                  InputDecoration(hintText: "Reps - Exercise - Time - Date"),
+            content: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputActivity = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                        hintText: "Activity - Ex: Shoulder press"),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputReps = value;
+                      });
+                    },
+                    decoration: InputDecoration(hintText: "Reps - Ex: 60"),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputSets = value;
+                      });
+                    },
+                    decoration: InputDecoration(hintText: "Sets - Ex: 3"),
+                  ),
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        inputIntensity = value;
+                      });
+                    },
+                    decoration:
+                        InputDecoration(hintText: "Intensity - Ex: 8 (Heavy)"),
+                  ),
+                ],
+              ),
             ),
             actions: <Widget>[
               ElevatedButton(
                 child: Text('CANCEL'),
                 onPressed: () {
                   setState(() {
-                    valueText = '';
+                    inputActivity = '';
                     Navigator.pop(context);
                   });
                 },
@@ -69,7 +110,7 @@ class _JournalPageState extends State<JournalPage> {
                 child: Text('OK'),
                 onPressed: () {
                   setState(() {
-                    if (valueText != '') {
+                    if (inputActivity != '') {
                       _addItem();
                     }
                     Navigator.pop(context);
@@ -83,10 +124,6 @@ class _JournalPageState extends State<JournalPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(jsonEncode(<String, dynamic>{
-        'userId': Provider.of<User>(context, listen: false).uid,
-        'activities': workouts,
-      }));
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
@@ -107,7 +144,7 @@ class _JournalPageState extends State<JournalPage> {
               Align(
                 alignment: Alignment.topRight,
                 child: ElevatedButton(
-                  child: Text("Add Workout"),
+                  child: Text("Send Data to DB"),
                   onPressed: () {
                     _workoutToBackEnd();
                   },
@@ -134,12 +171,19 @@ class _JournalPageState extends State<JournalPage> {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(0),
-              itemCount: entries.length,
+              itemCount: workouts.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   height: 50,
                   color: Colors.amber[500],
-                  child: Center(child: Text(entries[index])),
+                  child: Center(
+                      child: Text(
+                    workouts[index].printWorkout(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )),
                 );
               },
               separatorBuilder: (BuildContext context, int index) =>
