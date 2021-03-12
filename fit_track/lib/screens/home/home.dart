@@ -152,13 +152,20 @@ class _HomeState extends State<Home> {
   }
 }
 
-void _getContextData() async{
-  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+void _getContextData() async {
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
   WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
-  Weather w = await wf.currentWeatherByLocation(position.latitude, position.longitude);
+  Weather w =
+      await wf.currentWeatherByLocation(position.latitude, position.longitude);
   double temp = w.temperature.fahrenheit;
   print("Temperature: $temp Fahrenheit");
 
   DateTime now = DateTime.now();
-  print("Time: " + now.hour.toString() + ":" + now.minute.toString() + ":" + now.second.toString());
+  print("Time: " +
+      now.hour.toString() +
+      ":" +
+      now.minute.toString() +
+      ":" +
+      now.second.toString());
 }

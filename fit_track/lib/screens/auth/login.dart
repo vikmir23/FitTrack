@@ -17,6 +17,7 @@ class _loginState extends State<login> {
     dynamic userResult = await _auth.signInWithEmail(email, password);
     if (userResult == null) {
       setState(() => error = "invalid credentials");
+
     }
     else { //added
       Navigator.pop(context);

@@ -1,6 +1,8 @@
 from datetime import *
+import operator
 import numpy as np
-
+import random
+# from firebase_admin import credentials, firestore, initialize_app
 
 '''
 Workout schema
@@ -14,9 +16,10 @@ Workout schema
 '''
 
 class Exercise:
-    def __init__(self, activity, reps, intensity):
+    def __init__(self, activity, reps, sets, intensity):
         self.activity = activity
         self.reps = reps
+        self.sets = sets
         self.intensity = intensity
 
     def getActivity(self):
@@ -25,19 +28,34 @@ class Exercise:
     def getReps(self):
         return self.reps
     
+    def getSets(self):
+        return self.sets
+    
     def getIntesity(self):
         return self.intensity
+
+    def setReps(self, reps):
+        self.reps = reps
+    
+    def setSets(self, sets):
+        self.sets = sets
+    
+    def setIntensity(self, intensity):
+        self.intensity = intensity
 
 
 '''
     userId: string,
     date: dateTime,
     activities: list of Exercises
+    weather: weather during workout
 '''
 class Workout:
     def __init__(self, userId, date, activities):
         self.userId = userId
-        self.date = date
+        temp = date.timestamp()
+        dt_obj = datetime.fromtimestamp(temp)
+        self.date = dt_obj
         self.activities = activities
     
     def __init__(self, date, activities):
@@ -50,6 +68,7 @@ class Workout:
 
     def getActivities(self):
         return self.activities
+    
     
 
 class User:
@@ -72,10 +91,10 @@ class User:
             activities = []
             act = w["activities"]
             for a in act:
-                A = Exercise(a["activity"], a["reps"], a["intensity"])
+                A = Exercise(a["activity"], a["reps"], a["sets"], a["intensity"])
                 activities.append(A)
             workout.append( Workout(w["dateAdded"], activities))
-        self.workouts = workout
+        self.workouts = sorted(workout, key = operator.attrgetter('date'))
 
     #get methods
     def getAuthId(self):
@@ -96,20 +115,116 @@ class User:
     def getGoal(self):
         return (self.goal, self.goalStr)
     
-    def getWeeksWorkouts(self):
+    def getLast5Workouts(self):
         now = datetime.now()
-        weekWorkouts = []
+        recentWorkouts = []
+        count = 0
         for w in self.workouts:
-            d = w.getDate()
-            print(type(d))
-            # print(w.getDate())
-
+            recentWorkouts.append(w)
+            count += 1
+            if count == 5:
+                break
+        return recentWorkouts
 
     '''
     Looks at previous workouts and users goal to generate 
     '''
-    def getWorkoutRec(self):
-        workouts = self.workouts
-        week  = self.getWeeksWorkouts()
+    def getWorkoutRec(self, exercise_ref):
+
+        recent  = self.getLast5Workouts()
+
+        goal, goalStr = self.getGoal()
+
+        #for all goals implement a regiment with each workout targeting a specific set of muscles
+        #day 1 will be targetting biceps/back
+        #day 2 will be targetting triceps/chest/shoulders
+        #day 3 will be targetting hamstrings/quads/calves
+        #day 4 will be abdominals
+
+        #workouts done on each day will be generated randomly by muscle group from a database 
+
+        musedRecent = []
+
+        for i in recent:
+            mWorkout = []
+            act = i.getActivities()
+
+            for a in act:
+                name = a.getActivity()
+                data = exercise_ref.where("name", "==", name).stream()
+                dlist = [d.to_dict() for d in data]
+                if len(dlist) != 0:
+                    mWorkout.append(dlist[0]["muscles"])
+            mWorkout.sort()
+            musedRecent.append(mWorkout)
+        index = -1
+        for i in range(len(musedRecent)):
+            if len(musedRecent[i]) > 0:
+                index = i
+
+        activities = []
         
+        if index == -1:
+            biData = exercise_ref.where("muscles", "==", "biceps").get()
+            biIndex = []
+            for i in range(6):
+                biIndex.append(random.randint(0,len(biData)))
+            baIndex = []
+            baData = exercise_ref.where("muscles", "==", "back").get()
+            for i in range(6):
+                baIndex.append(random.randint(0, len(baData)))
+            
+            for i in range(6):
+                biDict = dict()
+                fData = biData[biIndex[i]].to_dict()
+                biDict["activity"] = fData["name"]
+                activities.append(biDict)
+
+                baDict = dict()
+                fData = baData[baIndex[i]].to_dict()
+                baDict["activity"] = fData["name"]
+                activities.append(baDict)
+        
+        else:
+            muscles = musedRecent[i]
+            for m in muscles:
+                if m == 'back' or m == 'biceps':
+                    pass
+                elif m == 'triceps' or m == 'chest' or m == 'shoulders':
+                    pass
+                elif m == 'hamstrings' or m == 'quads' or m == 'calves':
+                    pass
+                elif m == "abdominals":
+                    pass
+
+        #Muscle Strengthening intensity 9
+        #sets 5
+        #reps 15
+        if goal == 0:
+            for i in range(len(activities)):
+                activities[i]["sets"] = 5
+                activities[i]["reps"] = 15
+                activities[i]["intensity"] = 9
+
+        #Light exercise intensity 3
+        #sets 3
+        #reps 10
+        elif goal == 1:
+            for i in range(len(activities)):
+                activities[i]["sets"] = 3
+                activities[i]["reps"] = 10
+                activities[i]["intensity"] = 3
+        
+        #Moderate exercise intensity 6
+        #sets 4
+        #reps 12
+        elif goal == 2:
+            for i in range(len(activities)):
+                activities[i]["sets"] = 4
+                activities[i]["reps"] = 12
+                activities[i]["intensity"] = 6
+
+        retDict = dict()
+        retDict["activities"] = activities
+        return retDict
     
