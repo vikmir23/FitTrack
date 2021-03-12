@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'package:fit_track/models/user.dart';
 
 class JournalPage extends StatefulWidget {
   final Color color;
@@ -11,6 +15,7 @@ class JournalPage extends StatefulWidget {
 
 class _JournalPageState extends State<JournalPage> {
   List<String> entries = [];
+  List<Workout> workouts = [Workout(), Workout()];
 
   String valueText = '';
 
@@ -18,6 +23,21 @@ class _JournalPageState extends State<JournalPage> {
     setState(() {
       entries.insert(0, valueText);
     });
+  }
+
+  _workoutToBackEnd() async {
+    var response = await http.post(
+      'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/addWorkout',
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'userId': Provider.of<User>(context, listen: false).uid,
+        'activities': workouts,
+      }),
+    );
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
   }
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
@@ -32,7 +52,8 @@ class _JournalPageState extends State<JournalPage> {
                   valueText = value;
                 });
               },
-              decoration: InputDecoration(hintText: "Reps - Exercise - Time - Date"),
+              decoration:
+                  InputDecoration(hintText: "Reps - Exercise - Time - Date"),
             ),
             actions: <Widget>[
               ElevatedButton(
@@ -62,6 +83,10 @@ class _JournalPageState extends State<JournalPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(jsonEncode(<String, dynamic>{
+        'userId': Provider.of<User>(context, listen: false).uid,
+        'activities': workouts,
+      }));
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
@@ -77,6 +102,18 @@ class _JournalPageState extends State<JournalPage> {
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topRight,
+                child: ElevatedButton(
+                  child: Text("Add Workout"),
+                  onPressed: () {
+                    _workoutToBackEnd();
+                  },
+                  style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.green)),
                 ),
               ),
               Align(
@@ -117,13 +154,24 @@ class _JournalPageState extends State<JournalPage> {
 }
 
 class Workout {
-  String name;
-  String time;
-  String date;
-  int reps;
-  Workout({this.name = 'Placeholder', this.reps = 30, this.time = '00:00', this.date = '01/01/21'});
+  String activity;
+  String reps;
+  String sets;
+  String intensity;
+  Workout(
+      {this.activity = 'Placeholder',
+      this.reps = "30",
+      this.sets = "3",
+      this.intensity = "8"});
 
   printWorkout() {
-    return "$reps  $name  $time  $date";
+    return "$activity  $reps  $sets  $intensity";
   }
+
+  Map<String, dynamic> toJson() => {
+        'activity': activity,
+        'reps': int.parse(reps),
+        'sets': int.parse(sets),
+        'intensity': int.parse(intensity),
+      };
 }
