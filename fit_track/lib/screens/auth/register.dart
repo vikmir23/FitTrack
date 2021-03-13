@@ -1,3 +1,4 @@
+import 'package:fit_track/screens/qnaire/qnaireFirst.dart';
 import 'package:fit_track/services/auth.dart';
 import 'package:flutter/material.dart';
 
@@ -62,6 +63,8 @@ class _registerState extends State<register> {
               ),
               onPressed: () async {
                 registerWithEmail();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => QnaireFirst()));
               },
             ),
             ElevatedButton(

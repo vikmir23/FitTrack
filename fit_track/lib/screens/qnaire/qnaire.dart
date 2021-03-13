@@ -1,3 +1,5 @@
+import 'package:fit_track/screens/home/home.dart';
+import 'package:fit_track/screens/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -8,9 +10,9 @@ enum Gender { male, female, other }
 
 // New user questionnaire (actually just a form)
 class Qnaire extends StatefulWidget {
-  final Function _isCompleted;
+  // final Function _isCompleted;
 
-  Qnaire(this._isCompleted);
+  // Qnaire(this._isCompleted);
 
   @override
   _QnaireState createState() => _QnaireState();
@@ -22,7 +24,11 @@ class _QnaireState extends State<Qnaire> {
   int ageValue = 0;
   int weightValue = 0;
   int heightValue = 0;
-  List<String> goals = <String>['Muscle-Strengthening','Light Exercise','Moderate Exercise'];
+  List<String> goals = <String>[
+    'Muscle-Strengthening',
+    'Light Exercise',
+    'Moderate Exercise'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +188,8 @@ class _QnaireState extends State<Qnaire> {
                         height: 2,
                         color: Colors.blue,
                       ),
-                      items: goals.map<DropdownMenuItem<String>>((String value) {
+                      items:
+                          goals.map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),
@@ -206,14 +213,14 @@ class _QnaireState extends State<Qnaire> {
                       style: TextStyle(fontSize: 16),
                     ),
                     onPressed: () async {
-                      widget._isCompleted();
                       var response = await http.post(
                         'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/user/addUser',
                         headers: <String, String>{
                           'Content-Type': 'application/json; charset=UTF-8',
                         },
                         body: jsonEncode(<String, dynamic>{
-                          'authId': Provider.of<User>(context, listen: false).uid,
+                          'authId':
+                              Provider.of<User>(context, listen: false).uid,
                           'gender': genderValue,
                           'age': ageValue,
                           'height': heightValue,
@@ -223,7 +230,8 @@ class _QnaireState extends State<Qnaire> {
                       );
                       print('Response status: ${response.statusCode}');
                       print('Response body: ${response.body}');
-                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Wrapper()));
                     }),
               ),
             ],
