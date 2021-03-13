@@ -40,6 +40,8 @@ class _HomePageState extends State<HomePage> {
 
   void initState() {
     super.initState();
+    _getWeather();
+    _getLocation();
     _tempf(context);
   }
 
@@ -120,7 +122,7 @@ class _HomePageState extends State<HomePage> {
   _getWeather() async {
   Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
-  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
+  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07"); // GET KEY HERE
   Weather w =
       await wf.currentWeatherByLocation(position.latitude, position.longitude);
   double temp = w.temperature.fahrenheit;
@@ -134,7 +136,7 @@ class _HomePageState extends State<HomePage> {
   _getLocation() async {
   Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
-  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
+  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07"); // GET KEY HERE
   Weather w =
       await wf.currentWeatherByLocation(position.latitude, position.longitude);
   setState(() {
@@ -144,8 +146,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _getWeather();
-    _getLocation();
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
