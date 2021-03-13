@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:fit_track/models/user.dart';
 
+
 class JournalPage extends StatefulWidget {
   final Color color;
 
@@ -14,13 +15,19 @@ class JournalPage extends StatefulWidget {
 }
 
 class _JournalPageState extends State<JournalPage> {
+  bool isLoading = false;
   List<Workout> entries = [];
-  List<Workout> workouts = [Workout()];
+  List<Workout> workouts = [];
 
   String inputActivity = '';
   String inputReps = '';
   String inputSets = '';
   String inputIntensity = '';
+
+  void initState() {
+    super.initState();
+    _loadJournal(context);
+  }
 
   _addItem() {
     setState(() {
@@ -49,11 +56,44 @@ class _JournalPageState extends State<JournalPage> {
       },
       body: jsonEncode(<String, dynamic>{
         'userId': Provider.of<User>(context, listen: false).uid,
-        'activities': entries,
+        'activities': [
+          {
+            'activity': inputActivity,
+            'reps': inputReps,
+            'sets': inputSets,
+            'intensity': inputIntensity,
+          }
+        ],
       }),
     );
     print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  }
+
+  _loadJournal(context) async {
+    setState(() {
+      isLoading = true;
+    });
+    var url =
+        'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/user/' +
+            Provider.of<User>(context, listen: false).uid;
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body) as List;
+      for (var i = 0; i < jsonResponse.length; i++) {
+        for (var j = 0; j < jsonResponse[i]['activities'].length; j++) {
+          Workout w = Workout(
+            activity: jsonResponse[i]['activities'][j]['activity'],
+            reps: '${jsonResponse[i]['activities'][j]['reps']}',
+            sets: '${jsonResponse[i]['activities'][j]['sets']}',
+            intensity: '${jsonResponse[i]['activities'][j]['intensity']}',
+          );
+          workouts.insert(0, w);
+        }
+      }
+    }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   Future<void> _displayTextInputDialog(BuildContext context) async {
@@ -174,28 +214,34 @@ class _JournalPageState extends State<JournalPage> {
             ],
           ),
           SizedBox(height: 20),
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(0),
-              itemCount: workouts.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 50,
-                  color: Colors.amber[500],
-                  child: Center(
-                      child: Text(
-                    workouts[index].printWorkout(),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(),
-            ),
-          ),
+          isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                )
+              : Expanded(
+                  child: ListView.separated(
+                    padding: const EdgeInsets.all(0),
+                    itemCount: workouts.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        height: 50,
+                        color: Colors.amber[500],
+                        child: Center(
+                            child: Text(
+                          workouts[index].printWorkout(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
+                      );
+                    },
+                    separatorBuilder: (BuildContext context, int index) =>
+                        const Divider(),
+                  ),
+                ),
         ],
         mainAxisSize: MainAxisSize.min,
       ),

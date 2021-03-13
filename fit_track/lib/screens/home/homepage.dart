@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:fit_track/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'dart:math';
 
 class HomePage extends StatefulWidget {
   final Color color;
@@ -85,7 +86,14 @@ class _HomePageState extends State<HomePage> {
       }),
     );
     print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  }
+
+  _getNum() {
+    Random random = new Random();
+    int randomNumber = random.nextInt(100) + 400;
+    setState(() {
+          caloriesBurned = '$randomNumber';
+        });
   }
 
   @override
@@ -195,7 +203,10 @@ class _HomePageState extends State<HomePage> {
               SizedBox(width: 20),
               ElevatedButton(
                 child: Text("Get Next Recommendation"),
-                onPressed: _nextRecommendation,
+                onPressed: () {
+                  _nextRecommendation();
+                  _getNum();
+                },
               ),
             ],
           ),
