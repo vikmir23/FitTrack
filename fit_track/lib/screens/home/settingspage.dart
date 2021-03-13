@@ -15,7 +15,7 @@ class SettingsPage extends StatelessWidget {
             child: const ElevatedButton(
               onPressed: null,
               child: Text(
-                'User Preferences',
+                'Reset Data',
                 style: TextStyle(fontSize: 24),
               ),
             ),

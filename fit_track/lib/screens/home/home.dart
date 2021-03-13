@@ -2,8 +2,7 @@ import 'package:fit_track/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fit_track/screens/qnaire/qnaire.dart';
 import 'package:provider/provider.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:weather/weather.dart';
+
 
 import 'homepage.dart';
 import 'journalpage.dart';
@@ -52,7 +51,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     if (justLoggedIn) {
-      _getContextData();
       justLoggedIn = false;
     }
     return Scaffold(
@@ -101,22 +99,4 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-}
-
-void _getContextData() async {
-  Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high);
-  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
-  Weather w =
-      await wf.currentWeatherByLocation(position.latitude, position.longitude);
-  double temp = w.temperature.fahrenheit;
-  print("Temperature: $temp Fahrenheit");
-
-  DateTime now = DateTime.now();
-  print("Time: " +
-      now.hour.toString() +
-      ":" +
-      now.minute.toString() +
-      ":" +
-      now.second.toString());
 }

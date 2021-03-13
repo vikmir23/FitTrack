@@ -4,6 +4,8 @@ import 'package:fit_track/models/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'dart:math';
+import 'package:geolocator/geolocator.dart';
+import 'package:weather/weather.dart';
 
 class HomePage extends StatefulWidget {
   final Color color;
@@ -27,6 +29,9 @@ class _HomePageState extends State<HomePage> {
   String numExercises = '';
   String averageIntensity = '';
   String caloriesBurned = '435';
+
+  String weatherValue;
+  String areaName;
 
   void initState() {
     super.initState();
@@ -103,8 +108,34 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  _getWeather() async {
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
+  Weather w =
+      await wf.currentWeatherByLocation(position.latitude, position.longitude);
+  double temp = w.temperature.fahrenheit;
+  setState(() {
+       weatherValue =  "$temp F";
+    });
+ 
+}
+
+  _getLocation() async {
+  Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+  WeatherFactory wf = new WeatherFactory("cfffe498daaa9e2eaa0f33a84ec28d07");
+  Weather w =
+      await wf.currentWeatherByLocation(position.latitude, position.longitude);
+  setState(() {
+       areaName =  w.areaName;
+    });
+}
+
   @override
   Widget build(BuildContext context) {
+    _getWeather();
+    _getLocation();
     return Container(
       margin: EdgeInsets.all(20),
       child: Column(
@@ -250,9 +281,39 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 16),
             ),
           ),
+          SizedBox(height: 20),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              "Context",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Location: $areaName',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Weather: $weatherValue',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
         ],
         mainAxisSize: MainAxisSize.min,
       ),
     );
   }
 }
+
+
+
+
