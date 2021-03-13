@@ -261,7 +261,7 @@ class Workout {
       this.intensity = "8"});
 
   printWorkout() {
-    return "$activity  $reps  $sets  $intensity";
+    return "$activity   R: $reps  S: $sets  I: $intensity";
   }
 
   Map<String, dynamic> toJson() => {

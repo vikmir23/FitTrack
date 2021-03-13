@@ -40,17 +40,24 @@ class _HomePageState extends State<HomePage> {
     var url =
         'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/user/recWorkout/' +
             Provider.of<User>(context, listen: false).uid;
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      jsonResponse = convert.jsonDecode(response.body);
-      exercise = jsonResponse['activities'][0]['activity'];
-      recReps = '${jsonResponse['activities'][0]['reps']}';
-      recSets = '${jsonResponse['activities'][0]['sets']}';
-      recIntensity = '${jsonResponse['activities'][0]['intensity']}';
+    while (true) {
+      try {
+        var response = await http.get(url);
+        if (response.statusCode == 200) {
+          jsonResponse = convert.jsonDecode(response.body);
+          exercise = jsonResponse['activities'][0]['activity'];
+          recReps = '${jsonResponse['activities'][0]['reps']}';
+          recSets = '${jsonResponse['activities'][0]['sets']}';
+          recIntensity = '${jsonResponse['activities'][0]['intensity']}';
 
-      averageIntensity =
-          '${jsonResponse['activities'].map((m) => m['intensity']).reduce((a, b) => a + b) / jsonResponse['activities'].length}';
-      numExercises = '${jsonResponse['activities'].length}';
+          averageIntensity =
+              '${jsonResponse['activities'].map((m) => m['intensity']).reduce((a, b) => a + b) / jsonResponse['activities'].length}';
+          numExercises = '${jsonResponse['activities'].length}';
+          break;
+        }
+      } catch (e) {
+        continue;
+      }
     }
     setState(() {
       isLoading = false;
@@ -92,8 +99,8 @@ class _HomePageState extends State<HomePage> {
     Random random = new Random();
     int randomNumber = random.nextInt(100) + 400;
     setState(() {
-          caloriesBurned = '$randomNumber';
-        });
+      caloriesBurned = '$randomNumber';
+    });
   }
 
   @override
