@@ -1,3 +1,6 @@
+/* Progress screen where the user can see daily/weekly/monthly steps and workouts done so far
+as stats. The steps counter was possible thanks to the pedometer library*/
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

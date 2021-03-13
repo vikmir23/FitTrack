@@ -1,3 +1,5 @@
+// First screen if user is not logged in
+
 import 'package:flutter/material.dart';
 import 'package:fit_track/screens/auth/register.dart';
 import 'package:fit_track/screens/auth/login.dart';

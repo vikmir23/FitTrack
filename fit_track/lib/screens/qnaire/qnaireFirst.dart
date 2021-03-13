@@ -1,3 +1,5 @@
+/* Welcome to Fittrack screen. This is the screen shown to the user as soon as they create an account */
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';

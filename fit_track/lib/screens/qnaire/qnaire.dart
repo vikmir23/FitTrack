@@ -1,3 +1,5 @@
+/* Implementation of the new user form screen */
+
 import 'package:fit_track/screens/home/home.dart';
 import 'package:fit_track/screens/wrapper.dart';
 import 'package:flutter/material.dart';
@@ -212,7 +214,7 @@ class _QnaireState extends State<Qnaire> {
                       'Done',
                       style: TextStyle(fontSize: 16),
                     ),
-                    onPressed: () async {
+                    onPressed: () async { // sends input data to back-end and creates the user's personal profile in the system
                       var response = await http.post(
                         'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/user/addUser',
                         headers: <String, String>{

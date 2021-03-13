@@ -1,3 +1,5 @@
+// Authentication service
+
 import 'package:fit_track/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

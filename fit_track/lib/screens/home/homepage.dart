@@ -1,3 +1,5 @@
+/* This is the home screen the user sees after they log in.*/
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:fit_track/models/user.dart';
@@ -21,15 +23,18 @@ class _HomePageState extends State<HomePage> {
   bool isLoading = false;
   int index = 1;
 
+  // Variables to display recommendation
   String exercise = '';
   String recReps = '';
   String recSets = '';
   String recIntensity = '';
 
+  // Data about the workout
   String numExercises = '';
   String averageIntensity = '';
   String caloriesBurned = '435';
 
+  // Context data (eventually sent to back-end)
   String weatherValue;
   String areaName;
 
@@ -38,6 +43,7 @@ class _HomePageState extends State<HomePage> {
     _tempf(context);
   }
 
+  // HTTP request to get the recommendation from the server, sends userID
   _tempf(context) async {
     setState(() {
       isLoading = true;
@@ -69,6 +75,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // if the user wants a different recommendation, the next rec in ranking will be displayed
   _nextRecommendation() {
     setState(() {
       exercise = jsonResponse['activities'][index]['activity'];
@@ -79,6 +86,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // informs the recommendation system that the user accepted the recommendation displayed on screen
   _sendRectoBackEnd() async {
     var response = await http.post(
       'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/addWorkout',
@@ -108,6 +116,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // Weather data from openWeather API (context)
   _getWeather() async {
   Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
@@ -121,6 +130,7 @@ class _HomePageState extends State<HomePage> {
  
 }
 
+  // Location data from device itself (context)
   _getLocation() async {
   Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);

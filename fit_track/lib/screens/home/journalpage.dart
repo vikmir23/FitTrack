@@ -1,3 +1,8 @@
+/* User's journal screen. The user can manually add entries (exercises) and send them to the 
+recommendation system. All user workouts are stored in the back-end so the journal shows all
+exercises recorded with the most recent at the top.
+*/
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -29,6 +34,7 @@ class _JournalPageState extends State<JournalPage> {
     _loadJournal(context);
   }
 
+  // function called when user taps on accept after filling the 'add entry' form
   _addItem() {
     setState(() {
       workouts.insert(
@@ -48,6 +54,7 @@ class _JournalPageState extends State<JournalPage> {
     });
   }
 
+  // sends workout to back-end with HTTP post
   _workoutToBackEnd() async {
     var response = await http.post(
       'https://bsxd0j587l.execute-api.us-east-1.amazonaws.com/dev/workouts/addWorkout',
@@ -69,6 +76,7 @@ class _JournalPageState extends State<JournalPage> {
     print('Response status: ${response.statusCode}');
   }
 
+  // HTTP request to get all the exercises done by user uID
   _loadJournal(context) async {
     setState(() {
       isLoading = true;
@@ -96,6 +104,7 @@ class _JournalPageState extends State<JournalPage> {
     });
   }
 
+  // 'Add entry' form
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
         context: context,

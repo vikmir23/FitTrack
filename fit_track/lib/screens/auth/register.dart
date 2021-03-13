@@ -1,3 +1,4 @@
+// Register screen (creates a new account)
 import 'package:fit_track/screens/qnaire/qnaireFirst.dart';
 import 'package:fit_track/services/auth.dart';
 import 'package:flutter/material.dart';

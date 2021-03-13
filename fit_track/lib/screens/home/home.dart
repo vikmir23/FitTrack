@@ -1,3 +1,6 @@
+/* Home.dart is the backbone of every screen in FitTrack after the user logs in.
+Here, the app's header and navigation bar are implemented.*/
+
 import 'package:fit_track/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fit_track/screens/qnaire/qnaire.dart';
@@ -15,13 +18,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _currentIndex = 0;
+  int _currentIndex = 0; // controls which screen is displayed as the user navigates the app
   bool justLoggedIn = true;
   final List<Widget> _children = [
-    HomePage(Colors.blue), // place holder color
-    JournalPage(Colors.white), // place holder color
-    ProgressPage(Colors.lightGreen), // place holder color
-    SettingsPage(Colors.grey), // place holder color
+    HomePage(Colors.blue),
+    JournalPage(Colors.white), 
+    ProgressPage(Colors.lightGreen), 
+    SettingsPage(Colors.grey), 
   ];
   final _appBarText = [
     'Home',
@@ -30,7 +33,7 @@ class _HomeState extends State<Home> {
     'Settings',
   ];
   final authService _auth = authService();
-  var isNewUser = false; // change this to False to debug home page faster
+  var isNewUser = false; 
 
   void signout() async {
     await _auth.signout();
