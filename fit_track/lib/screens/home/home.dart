@@ -55,100 +55,51 @@ class _HomeState extends State<Home> {
       _getContextData();
       justLoggedIn = false;
     }
-    return isNewUser ==
-            false // If user is NOT new then display New User form else just home screen
-        ? Scaffold(
-            backgroundColor: Colors.white,
-            appBar: AppBar(
-              title: Text(_appBarText[_currentIndex]),
-              // title: Text("Home"),
-              centerTitle: true,
-              backgroundColor: Colors.green[400],
-              actions: [
-                TextButton.icon(
-                  icon: Icon(Icons.person, color: Colors.white),
-                  label: Text(
-                    "Sign out",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: signout,
-                )
-              ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(_appBarText[_currentIndex]),
+        // title: Text("Home"),
+        centerTitle: true,
+        backgroundColor: Colors.green[400],
+        actions: [
+          TextButton.icon(
+            icon: Icon(Icons.person, color: Colors.white),
+            label: Text(
+              "Sign out",
+              style: TextStyle(color: Colors.white),
             ),
-            body: _children[_currentIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              fixedColor: Colors.green[400],
-              onTap: onTabTapped,
-              currentIndex: _currentIndex,
-              type: BottomNavigationBarType.fixed,
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.book),
-                  label: 'Journal',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.fitness_center),
-                  label: 'Progress',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.settings),
-                  label: 'Settings',
-                )
-              ],
-              backgroundColor: Colors.grey[150],
-            ),
+            onPressed: signout,
           )
-        : Scaffold(
-            backgroundColor: Colors.white,
-            body: Container(
-              margin: EdgeInsets.all(30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Welcome to FitTrack!',
-                    style: TextStyle(
-                      fontSize: 32,
-                      color: Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 40),
-                  Text(
-                    'FitTrack is a recommendation app designed to enhance your physical health. To start enjoying the experience, we would like to ask you a few questions.',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 80),
-                  Container(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      child: Text(
-                        'Take Questionnaire',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Qnaire(_completed)));
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
+        ],
+      ),
+      body: _children[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        fixedColor: Colors.green[400],
+        onTap: onTabTapped,
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: 'Journal',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: 'Progress',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          )
+        ],
+        backgroundColor: Colors.grey[150],
+      ),
+    );
   }
 }
 
